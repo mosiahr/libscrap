@@ -85,7 +85,10 @@ class HtmlPage:
         except MissingSchema as e:
             print(e)
 
-
+    def save_row_fields(self, path, row_fields=()):
+        with open(path, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(row_fields)
 
 if __name__=='__main__':
     page = HtmlPage()
