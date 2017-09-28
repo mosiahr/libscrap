@@ -4,14 +4,17 @@
 import socket
 import csv
 import re
+import sys
 import urllib.request
 from urllib.parse import urlparse
 import requests
+from requests.exceptions import MissingSchema
 from bs4 import BeautifulSoup
+
 from random import uniform
 from time import sleep
 
-BASE_URL = 'https://marry.ua/services/toaster/kiev'
+BASE_URL = 'https://www.python.org/blogs'
 
 # soup.prettify()
 
@@ -20,9 +23,8 @@ class HtmlPage:
     """
     Get HTML Page
     """
-    def __init__(self, url, lib_get_html='requests', lib_bs='lxml'):
+    def __init__(self, url=None, lib_get_html='requests', lib_bs='lxml'):
         """
-
         :param url: url
         :param lib_get_html: 'requests', 'urllib'
         :param lib_bs: "html.parser", "lxml", "lxml-xml", "xml", "html5lib"
@@ -30,17 +32,22 @@ class HtmlPage:
         self.url = url
         self.lib_get_html = lib_get_html
         self.lib_bs = lib_bs
-        self.host, self.host_and_scheme = self.get_host(url)[0], self.get_host(url)[1]
-        self.is_connected(write=True)
+        if self.url is not None:
+            self.set_url(self.url)
 
     def set_url(self, url):
         self.url = url
+        self.host, self.host_and_scheme = self.get_host(url)[0], self.get_host(url)[1]
+        self.is_connected(write=True)
 
     def get_host(self, url):
         try:
-            parse = urlparse(url)
-            host = parse.netloc
-            host_and_scheme = '{}://{}'.format(parse.scheme, parse.netloc)
+            if url != None:
+                parse = urlparse(url)
+                host = parse.netloc
+                host_and_scheme = '{}://{}'.format(parse.scheme, parse.netloc)
+            else:
+                host, host_and_scheme = None, None
         except:
             host, host_and_scheme = None, None
         return (host, host_and_scheme)
@@ -70,15 +77,18 @@ class HtmlPage:
 
         :return: BeautifulSoup object
         """
-        if self.is_connected():
-            html = self.get_html(url)
-            soup = BeautifulSoup(html, self.lib_bs)
-            return soup
+        try:
+            if self.is_connected():
+                html = self.get_html(url)
+                soup = BeautifulSoup(html, self.lib_bs)
+                return soup
+        except MissingSchema as e:
+            print(e)
 
 
 
 if __name__=='__main__':
-    page = HtmlPage(BASE_URL)
+    page = HtmlPage()
     page.set_url('https://marry.ua')
     print(page.url)
     # if page.is_connected(BASE_URL):
