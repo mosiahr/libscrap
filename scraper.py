@@ -19,38 +19,43 @@ BASE_URL = 'https://www.python.org/blogs'
 # soup.prettify()
 
 
-class HtmlPage:
-    """
-    Get HTML Page
-    """
+class Scraper:
+    host = None
+    host_and_scheme = None
+
     def __init__(self, url=None, lib_get_html='requests', lib_bs='lxml'):
         """
         :param url: url
         :param lib_get_html: 'requests', 'urllib'
         :param lib_bs: "html.parser", "lxml", "lxml-xml", "xml", "html5lib"
         """
-        self.url = url
+        self._url = url
         self.lib_get_html = lib_get_html
         self.lib_bs = lib_bs
-        if self.url is not None:
-            self.set_url(self.url)
+        if self._url is not None:
+            self.is_connected(True)
 
-    def set_url(self, url):
-        self.url = url
-        self.host, self.host_and_scheme = self.get_host(url)[0], self.get_host(url)[1]
-        self.is_connected(write=True)
+    @property
+    def url(self):
+        return self._url
 
-    def get_host(self, url):
-        try:
-            if url != None:
-                parse = urlparse(url)
-                host = parse.netloc
-                host_and_scheme = '{}://{}'.format(parse.scheme, parse.netloc)
-            else:
-                host, host_and_scheme = None, None
-        except:
-            host, host_and_scheme = None, None
-        return (host, host_and_scheme)
+    @url.setter
+    def url(self, url):
+        self._url = url
+        if self._url is not None:
+            self.is_connected(True)
+
+    @property
+    def host(self):
+        if self._url is not None:
+            parse = urlparse(self._url)
+            return parse.netloc
+
+    @property
+    def host_and_scheme(self):
+        if self._url is not None:
+            parse = urlparse(self._url)
+            return '{}://{}'.format(parse.scheme, parse.netloc)
 
     def is_connected(self, write=False):
         try:
@@ -85,15 +90,16 @@ class HtmlPage:
         except MissingSchema as e:
             print(e)
 
-    def save_row_fields(self, path, row_fields=()):
-        with open(path, 'w') as csvfile:
+    def save_csv(self, row_fields, path_to_file, mode='w'):
+        with open(path_to_file, mode) as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(row_fields)
 
 if __name__=='__main__':
-    page = HtmlPage()
-    page.set_url('https://marry.ua')
+    page = Scraper()
+    page.url = BASE_URL
     print(page.url)
-    # if page.is_connected(BASE_URL):
-    #     print("Hey")
+    print(page.host)
+    print(page.host_and_scheme)
 
+    page.save_csv(('col1', 'col2', 'col3'), 'example.csv')
