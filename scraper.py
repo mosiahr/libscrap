@@ -42,8 +42,7 @@ class Scraper:
     @url.setter
     def url(self, url):
         self._url = url
-        if self._url is not None:
-            self.is_connected(True)
+        self.is_connected(True)
 
     @property
     def host(self):
