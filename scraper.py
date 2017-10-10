@@ -70,11 +70,15 @@ class Scraper:
         print('WARNING ! url == None')
         return False
 
-    def get_html(self, url):
+    def get_html(self, url, coding='utf-8'):
         if self.lib_get_html == 'requests':
-            return requests.get(url).text
+            r = requests.get(url)
+            r.encoding = coding
+            print("Coding: ", r.encoding)
+            return r.text
         if self.lib_get_html == 'urllib':
-            return urllib.request.urlopen(url).read()
+            r = urllib.request.urlopen(url)
+            return r.read().decode(coding)
 
     def soup(self, url):
         """
