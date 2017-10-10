@@ -58,15 +58,17 @@ class Scraper:
             return '{}://{}'.format(parse.scheme, parse.netloc)
 
     def is_connected(self, write=False):
-        try:
-            ip = socket.gethostbyname(self.host)
-            socket.create_connection((ip, 80), timeout=2)
-            if write:
-                print('Connecting to the server ! HOST: {} | IP: {}'.format(self.host, ip))
-            return True
-        except Exception as e:
-            print(e)
-        print('Not conected !')
+        if self._url is not None:
+            try:
+                ip = socket.gethostbyname(self.host)
+                socket.create_connection((ip, 80), timeout=2)
+                if write:
+                    print('Connecting to the server ! HOST: {} | IP: {}'.format(self.host, ip))
+                return True
+            except Exception as e:
+                print(e)
+            print('Not conected !')
+        print('WARNING ! url == None')
         return False
 
     def get_html(self, url):
