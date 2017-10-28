@@ -74,7 +74,7 @@ class Scraper:
         if self.lib_get_html == 'requests':
             r = requests.get(url)
             r.encoding = coding
-            print("Coding: ", r.encoding)
+            # print("Coding: ", r.encoding)
             return r.text
         if self.lib_get_html == 'urllib':
             r = urllib.request.urlopen(url)
