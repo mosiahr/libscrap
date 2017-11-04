@@ -70,9 +70,9 @@ class Scraper:
         print('WARNING ! url == None')
         return False
 
-    def get_html(self, coding='utf-8'):
+    def get_html(self, coding='utf-8', useragent=None, proxy=None):
         if self.lib_get_html == 'requests':
-            r = requests.get(self.url)
+            r = requests.get(self.url, headers=useragent, proxies=proxy)
             r.encoding = coding
             # print("Coding: ", r.encoding)
             return r.text
