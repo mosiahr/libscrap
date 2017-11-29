@@ -15,6 +15,7 @@ from random import uniform
 from time import sleep
 
 BASE_URL = 'https://www.python.org/blogs'
+FIELDS = None
 
 # soup.prettify()
 
@@ -23,13 +24,14 @@ class Scraper:
     host = None
     host_and_scheme = None
 
-    def __init__(self, url=None, lib_get_html='requests', lib_bs='lxml'):
+    def __init__(self, url=None, row_fields=None, lib_get_html='requests', lib_bs='lxml'):
         """
         :param url: url
         :param lib_get_html: 'requests', 'urllib'
         :param lib_bs: "html.parser", "lxml", "lxml-xml", "xml", "html5lib"
         """
         self._url = url
+        self.row_fields=row_fields
         self.lib_get_html = lib_get_html
         self.lib_bs = lib_bs
         if self._url is not None:
@@ -100,8 +102,20 @@ class Scraper:
             writer = csv.writer(csvfile)
             writer.writerow(row_fields)
 
+    def save_header_cat(self, path, max_cat=101):
+        with open(path, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+
+            row_cat = []
+            for c in range(1, max_cat):
+                row_cat.extend(['Product {}'.format(c)])
+            row_cat = tuple(row_cat)
+
+            row_fields = self.row_fields + row_cat
+            writer.writerow(row_fields)
+
 if __name__=='__main__':
-    page = Scraper()
+    page = Scraper(row_fields=FIELDS)
     page.url = BASE_URL
     print(page.url)
     print(page.host)
