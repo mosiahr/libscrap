@@ -102,13 +102,13 @@ class Scraper:
             writer = csv.writer(csvfile)
             writer.writerow(row_fields)
 
-    def save_header_cat(self, path, max_cat=101):
+    def save_header_cat(self, path, name_cat='Category', max_cat=101):
         with open(path, 'w') as csvfile:
             writer = csv.writer(csvfile)
 
             row_cat = []
             for c in range(1, max_cat):
-                row_cat.extend(['Product {}'.format(c)])
+                row_cat.extend(['{} {}'.format(name_cat, c)])
             row_cat = tuple(row_cat)
 
             row_fields = self.row_fields + row_cat
